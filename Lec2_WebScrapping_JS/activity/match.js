@@ -27,21 +27,23 @@ function parseData(html) {
     teamName = teamName.split("Innings")[0].trim();
     console.log(teamName);
     // we will get all tr tag in a inning
-    let allRows = cheerio(bothInnings[i]).find(".table.batsman tbody tr");
-    for (let j = 0; j < allRows.length - 1; j++) {
-      let allCols = cheerio(allRows[j]).find("td");
-      if (allCols.length > 1) {
-        // 0 , 2 , 3 , 5 , 6 , 7
-        let batsmanName = cheerio(allCols[0]).find("a").text().trim();
-        let runs = cheerio(allCols[2]).text().trim();
-        let balls = cheerio(allCols[3]).text().trim();
-        let fours = cheerio(allCols[5]).text().trim();
-        let sixes = cheerio(allCols[6]).text().trim();
-        let sr = cheerio(allCols[7]).text().trim();
-        // String interpolation
-        //  console.log(`${batsmanName} Runs- ${runs} Balls- ${balls} Fours- ${fours} Sixes- ${sixes} SR- ${sr}`);
-        processDetails(teamName, batsmanName, runs, balls, fours, sixes, sr);
-      }
+    if(!teamName.includes("Team")){
+        let allRows = cheerio(bothInnings[i]).find(".table.batsman tbody tr");
+        for (let j = 0; j < allRows.length - 1; j++) {
+          let allCols = cheerio(allRows[j]).find("td");
+          if (allCols.length > 1) {
+            // 0 , 2 , 3 , 5 , 6 , 7
+            let batsmanName = cheerio(allCols[0]).find("a").text().trim();
+            let runs = cheerio(allCols[2]).text().trim();
+            let balls = cheerio(allCols[3]).text().trim();
+            let fours = cheerio(allCols[5]).text().trim();
+            let sixes = cheerio(allCols[6]).text().trim();
+            let sr = cheerio(allCols[7]).text().trim();
+            // String interpolation
+            //  console.log(`${batsmanName} Runs- ${runs} Balls- ${balls} Fours- ${fours} Sixes- ${sixes} SR- ${sr}`);
+            processDetails(teamName, batsmanName, runs, balls, fours, sixes, sr);
+          }
+        }
     }
   }
 }
