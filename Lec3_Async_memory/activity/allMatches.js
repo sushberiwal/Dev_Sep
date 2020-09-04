@@ -28,9 +28,12 @@ function parseData(html){
         let link = cheerio(links[i]).attr("href");
         let completeLink = "https://www.espncricinfo.com"+link;
         getMatchDetails(completeLink);
-    }
-    
+    }  
 }
 
 
 module.exports = getAllMatches;
+
+// Callbacks , Async function , async memory
+// callback hell , 
+// Automation => Promises , chaining , Async await

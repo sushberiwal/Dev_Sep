@@ -9,3 +9,5 @@
 ## FreeCodeCamp
 * https://www.freecodecamp.org/learn/
 
+## Puppeteer
+* https://pptr.dev/
