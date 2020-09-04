@@ -35,11 +35,53 @@ browserP.then(function (browser) {
      return pwTypedPromise;
   })
   .then(function(){
-      let loginPromise = tab.click(".ui-btn.ui-btn-large.ui-btn-primary.auth-button");
-      return loginPromise;
+      // parallely click and wait for navigation
+      // clickedPromise and waitForNavigation promise are pending.
+      let clickedPromise = tab.click(".ui-btn.ui-btn-large.ui-btn-primary.auth-button");
+      //networkidle0 => the moment when there is no request from the webPage for 500ms
+      let waitForNavigation = tab.waitForNavigation({waitUntil:"networkidle0"});
+      // paralley task started and promise.all will wait for all the pending promises to be resolved();
+      let navigatedPromise = Promise.all([ clickedPromise , waitForNavigation ]); 
+      return navigatedPromise;
   })
   .then(function(){
-      console.log("logged in");
+      let ipKitClicked = tab.click("#base-card-1-link");
+      let waitForNavigation = tab.waitForNavigation({waitUntil:"networkidle0"});
+      let navigatedPromise = Promise.all([ ipKitClicked , waitForNavigation ]); 
+      return navigatedPromise;
+  }).then(function(){
+      let waitPromise = tab.waitForSelector('a[data-attr1="warmup"]' , {visible:true});
+      return waitPromise;
+  })
+  .then(function(){
+      let warmupClicked = tab.click('a[data-attr1="warmup"]');
+      let waitForNavigation = tab.waitForNavigation({waitUntil:"networkidle0"});
+      let navigatedPromise = Promise.all([ warmupClicked , waitForNavigation ]); 
+      return navigatedPromise;
+  })
+  .then(function(){
+    let waitPromise = tab.waitForSelector(".js-track-click.challenge-list-item" , {visible:true});
+    return waitPromise;
+  })
+  .then(function(){
+      // document.querySelectorAll
+      // Array with pending promises => resolved
+      let allATagsPromise = tab.$$(".js-track-click.challenge-list-item")
+      return allATagsPromise;
+  })
+  .then(function(allTags){
+      // it will contain all the pending promises of links of questions and later will be resolved to links
+      let linksPromise = [];
+      // tab.evaluate takes two parameter
+      // tab.evaluate( function=> how to evaluate this element , element to be evaluated );
+    for(let i=0 ; i<allTags.length ; i++){
+        let linkP = tab.evaluate( function(elem){ return elem.getAttribute("href")  }  , allTags[i] );
+        linksPromise.push(linkP);
+    }
+    let allLinksPromise = Promise.all(linksPromise);
+    return allLinksPromise;
+  }).then(function(allLinks){
+      console.log(allLinks);
   })
   .catch(function (err) {
     console.log(err);
